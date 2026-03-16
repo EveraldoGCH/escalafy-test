@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { DashboardProvider } from '@/features/dashboard/context/DashboardContext';
 import { useGetReports } from '@/features/dashboard/hooks/useGetReports';
+import useDebounce from '@/features/dashboard/hooks/useDebounce';
 import { MetricCards } from '@/features/dashboard/components/MetricCards';
 import { DailyTable } from '@/features/dashboard/components/DailyTable';
 import { DateRangePicker } from '@/features/dashboard/components/DateRangePicker';
@@ -14,11 +15,16 @@ import { ReportResult } from '@/lib/metrics';
 
 function DashboardContent({ initialData }: { initialData: ReportResult }) {
   const { orgId, dateRange, selectedMetrics } = useDashboardContext();
+  const debouncedDateRange = useDebounce(dateRange, 600);
   const { notify } = useNotifications();
   const { data, isLoading, isError } = useGetReports(
-    { orgId, ...dateRange, metrics: selectedMetrics },
+    { orgId, ...debouncedDateRange, metrics: selectedMetrics },
     initialData,
   );
+
+  useEffect(() => {
+    console.log('Fetching data with params:', { orgId, ...debouncedDateRange, metrics: selectedMetrics });
+  }, [debouncedDateRange]);
 
   useEffect(() => {
     if (isError) notify('Error al cargar los datos', 'error');
