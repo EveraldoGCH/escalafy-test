@@ -23,10 +23,6 @@ function DashboardContent({ initialData }: { initialData: ReportResult }) {
   );
 
   useEffect(() => {
-    console.log('Fetching data with params:', { orgId, ...debouncedDateRange, metrics: selectedMetrics });
-  }, [debouncedDateRange]);
-
-  useEffect(() => {
     if (isError) notify('Error al cargar los datos', 'error');
   }, [isError, notify]);
 
